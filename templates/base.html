@@ -24,12 +24,18 @@
         </script>
         <!-- Link to static stylesheet -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+        <!-- Animate.css -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+        <!-- AOS Animation CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"/>
+
     </head>
 
     <body>
         <header>
             <!-- Navbar for larger screens -->
-            <nav class="nav-extended gradient-bkg" id="top">
+            <nav class="nav-extended gradient-bkg animate__animated" data-aos="fade-down" id="top">
                 <div class="nav-wrapper">
                     <a href="{{ url_for('home') }}" class="brand-logo center"><img src="{{ url_for('static', filename='graphics/SWAP-logo.png') }}" alt="Swap logo - double sided arrow in a shape of S">WAP</a>
                     <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="fas fa-bars"></i></a>
@@ -103,7 +109,7 @@
             </div> 
         </section>
 
-        <footer>
+        <footer data-aos="fade-up" data-aos-delay="200" class="animate__animated">
             <div class="container">
                 <div class="row">
                     <div class="col s6 m6">
@@ -141,5 +147,14 @@
         <script src="{{ url_for('static', filename='slick/slick.min.js') }}"></script>
         <!-- Link up static js file -->
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <!-- AOS Animation JS -->
+        <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+        <script>
+        AOS.init({
+            once: true, // animate only once per scroll
+            duration: 800,
+            offset: 50,
+        });
+        </script>
     </body>
 </html>

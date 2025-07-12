@@ -10,7 +10,7 @@ from datetime import datetime
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 
 
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
@@ -309,6 +309,7 @@ def register():
     otherwise the user is redirected to the registration page
     """
     data=request.get_json()
+    print(data)
     categories = serialize_doc(item_categories())
     profile_images = profile_img()
     if request.method == 'POST':
@@ -340,7 +341,7 @@ def register():
              "matched_creator": []})
 
         session["user"] = request.form.get("username")
-        return jsonify({"username":session['user']})
+        return jsonify({"success":True, "username":session['user']})
 
     return jsonify({ "categories":categories,
                            "profile_images":profile_images}), 200

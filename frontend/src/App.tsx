@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import LandingPage from './LandingPage'
 import ItemDetails from './ItemDetails'
@@ -11,8 +12,9 @@ import HeroLandingPage from './HeroLandingPage'
 import Register from './register'
 
 function App() {
+  const [username, setusername] = useState('');
   return (
-
+  
     <Router>
       <NavBar />
       <Routes>

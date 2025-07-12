@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from flask import (Flask, flash, render_template, redirect,
-                   request, url_for, session)
+                   request, url_for, session, jsonify)
 from pymongo import MongoClient 
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -105,6 +105,11 @@ def item_used_status():
     else:
         print("ERROR: 'item_used_status' document not found in 'categories' collection!")
         return []
+    
+def serialize_doc(doc):
+    if doc and '_id' in doc:
+        doc['_id'] = str(doc['_id'])
+    return doc
 
 
 @app.route("/")
@@ -116,9 +121,9 @@ def home():
     print(f"DEBUG: Collections in current DB: {db.list_collection_names()}")
 
     items = list(db.items.find().sort("liked_count", -1).limit(3))
-
+    serialized_all_items = [serialize_doc(item) for item in items]
     all_users = list(db.users.find())
-
+    serialized_all_users = [serialize_doc(user) for user in all_users]
     user_data = None
     user_liked_by = []
 
@@ -134,9 +139,7 @@ def home():
                 {"username": session['user'], "liked_by": [], "matched_items": [], "matched_creator": []}
             )
             user_liked_by = [] 
-    return render_template("index.html", items=items,
-                           all_users=all_users, user=user_data,
-                           liked=user_liked_by)
+    return jsonify({"items":serialized_all_items, "all_users" : serialized_all_users, "user":serialize_doc(user_data), "liked": serialize_doc(user_liked_by)}), 200
 
 @app.route("/items", methods=["GET", "POST"])
 def items():
@@ -150,9 +153,6 @@ def items():
     items = list(db.items.find().sort('_id', -1)) 
     print(f"DEBUG: Found {len(items)} items in /items route.")
 
-    items_paginated = pag_items(items)
-    pagination = pagination_arg(items)
-
     categories = item_categories() 
 
     all_users = list(db.users.find()) 
@@ -163,14 +163,17 @@ def items():
         user_liked_by = user_liked_by_doc["liked_by"] if user_liked_by_doc else []
         user_data = db.users.find_one(
             {"username": session["user"]})
-        return render_template("items.html", items=items_paginated,
-                               categories=categories, pagination=pagination,
-                               liked=user_liked_by, user=user_data,
-                               all_users=all_users)
+        return jsonify({ 
+                               "categories":categories,
+                               "liked":user_liked_by,
+                                "user":user_data,
+                               "all_users":all_users,
+                        }), 200
 
-    return render_template("items.html", items=items_paginated,
-                           categories=categories, pagination=pagination,
-                           all_users=all_users)
+    return jsonify({
+                           "categories":categories,
+                           "all_users":all_users,
+                    }), 200
 
 
 @app.route("/filter")
@@ -184,8 +187,6 @@ def filter():
     items = list(db.items.find( 
         {"category": {"$in": selected_categories}}).sort('_id', -1))
 
-    items_paginated = pag_items(items)
-    pagination = pagination_arg(items)
     all_users = list(db.users.find()) 
 
     if "user" in session:
@@ -193,18 +194,19 @@ def filter():
         user_liked_by_doc = db.matches.find_one(
             {"username": session["user"]})
         user_liked_by = user_liked_by_doc["liked_by"] if user_liked_by_doc else []
-        return render_template("items.html", items=items_paginated,
-                               categories=categories,
-                               selected_categories=selected_categories,
-                               pagination=pagination,
-                               liked=user_liked_by, user=user_data,
-                               all_users=all_users)
+        return jsonify({        "items":items,
+                                "categories":categories,
+                               "selected_categories":selected_categories,
+                               "liked":user_liked_by, 
+                               "user":user_data,
+                               "all_users":all_users
+                        }), 200
 
-    return render_template("items.html", items=items_paginated,
-                           categories=categories,
-                           selected_categories=selected_categories,
-                           pagination=pagination,
-                           all_users=all_users)
+    return jsonify({       "items":items,
+                            "categories":categories,
+                           "selected_categories":selected_categories,
+                           "all_users":all_users
+                    }), 200
 
 
 @app.route("/sort/<sort_by>")
@@ -227,22 +229,23 @@ def sort(sort_by):
     elif sort_by == 'flagged':
         items = list(db.items.find().sort("flagged", -1)) 
 
-    items_paginated = pag_items(items)
-    pagination = pagination_arg(items)
 
     if "user" in session:
         user_liked_by_doc = db.matches.find_one( 
             {"username": session["user"]})
         user_liked_by = user_liked_by_doc["liked_by"] if user_liked_by_doc else []
         user_data = db.users.find_one({"username": session["user"]}) 
-        return render_template("items.html", items=items_paginated,
-                               categories=categories, pagination=pagination,
-                               liked=user_liked_by, user=user_data,
-                               all_users=all_users)
+        return jsonify({       "items":items,
+                               "categories":categories,
+                               "liked":user_liked_by,
+                                "user":user_data,
+                               "all_users":all_users
+                               }), 200
 
-    return render_template("items.html", items=items_paginated,
-                           categories=categories, pagination=pagination,
-                           all_users=all_users)
+    return jsonify({       "items":items,
+                           "categories":categories,
+                           "all_users":all_users
+                           }), 200
 
 
 @app.route("/search")
@@ -257,22 +260,22 @@ def search():
 
     items = list(db.items.find({"$text": {"$search": query}})) 
 
-    items_paginated = pag_items(items)
-    pagination = pagination_arg(items)
-
     if "user" in session:
         user_liked_by_doc = db.matches.find_one( 
             {"username": session["user"]})
         user_liked_by = user_liked_by_doc["liked_by"] if user_liked_by_doc else []
         user_data = db.users.find_one({"username": session["user"]}) 
-        return render_template("items.html", items=items_paginated,
-                               categories=categories, pagination=pagination,
-                               liked=user_liked_by, user=user_data,
-                               query=query, all_users=all_users)
+        return render_template({"items":items,
+                               "categories":categories,
+                               "liked":user_liked_by, 
+                               "user":user_data,
+                               "query":query,
+                                "all_users":all_users}), 200
 
-    return render_template("items.html", items=items_paginated,
-                           categories=categories, pagination=pagination,
-                           query=query, all_users=all_users)
+    return render_template({"items":items,
+                           "categories":categories,
+                           "query":query, 
+                           "all_users":all_users}), 200
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -322,8 +325,8 @@ def register():
         flash("You're officially a Swapper now, woo!")
         return redirect(url_for('items', username=session['user']))
 
-    return render_template("register.html", categories=categories,
-                           profile_images=profile_images)
+    return jsonify({ "categories":categories,
+                           "profile_images":profile_images}), 200
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -353,7 +356,7 @@ def login():
             flash("Incorrect Username and/or Password")
             return redirect(url_for('login'))
 
-    return render_template("login.html")
+    return jsonify({"success": False}), 400
 
 
 @app.route('/logout')
@@ -408,10 +411,10 @@ def add_item():
 
     user_data = db.users.find_one( 
         {"username": session["user"]})
-    return render_template("add_item.html", categories=categories,
-                           user=user_data,
-                           item_size=item_size, item_fit=item_fit,
-                           item_used=item_used)
+    return jsonify({ "categories":categories,
+                           "user":user_data,
+                           "item_size":item_size, "item_fit":item_fit,
+                           "item_used":item_used}), 200
 
 
 @app.route("/edit_item/<item_id>", methods=["GET", "POST"])
@@ -448,10 +451,12 @@ def edit_item(item_id):
     item = db.items.find_one( 
         {"_id": ObjectId(item_id)})
     user_data = db.users.find_one({"username": session["user"]}) 
-    return render_template("edit_item.html", categories=categories,
-                           item=item, user=user_data,
-                           item_size=item_size, item_fit=item_fit,
-                           item_used=item_used)
+    return jsonify({"categories":categories,
+                           "item":item, 
+                           "user":user_data,
+                           "item_size":item_size, 
+                           "item_fit":item_fit,
+                           "item_used":item_used}), 200
 
 
 @app.route('/delete_item/<item_id>')
@@ -550,10 +555,13 @@ def my_profile(username):
     else:
         matches = [] 
 
-    return render_template('my_profile.html',
-                           items=items, user=user_data,
-                           item_count=item_count, liked=user_liked_by,
-                           matches=matches, all_users=all_users)
+    return jsonify({
+                           "items":items, 
+                           "user":user_data,
+                           "item_count":item_count, 
+                           "liked":user_liked_by,
+                           "matches":matches,
+                            "all_users":all_users}), 200
 
 
 @app.route('/edit_profile/<username>', methods=['GET', 'POST'])
@@ -580,8 +588,9 @@ def edit_profile(username):
         flash(f"{edited_profile['username']}'s profile updated succesfully")
         return redirect(url_for('my_profile', username=username))
 
-    return render_template("edit_profile.html", categories=categories,
-                           user=user_data, profile_images=profile_images)
+    return jsonify({ "categories":categories,
+                    "user":user_data,
+                    "profile_images":profile_images}), 200
 
 
 if __name__ == '__main__':

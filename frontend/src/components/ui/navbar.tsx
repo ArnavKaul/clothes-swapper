@@ -104,18 +104,18 @@ export default function NavBar() {
                     to="/"
                     className="absolute xl:left-44 left-4 flex items-center gap-2"
                 >
-                    <span className="font-medium text-white">Clothes Swap</span>
+                    <span className="font-large text-cyan-400">Clothes Swap</span>
                 </Link>
                 <nav className="hidden md:flex items-center gap-6 justify-center text-sm font-medium w-full">
                     <Link
                         to="/"
-                        className="text-gray-100 hover:text-white relative after:bg-white after:absolute after:h-0.5 after:w-0 after:-bottom-1 after:left-0 hover:after:w-full after:transition-all duration-300"
+                        className="text-cyan-400 hover:text-white relative after:bg-white after:absolute after:h-0.5 after:w-0 after:-bottom-1 after:left-0 hover:after:w-full after:transition-all duration-300"
                     >
                         Home
                     </Link>
                     <Link
                         to="/about"
-                        className="text-gray-100 hover:text-white relative after:bg-white after:absolute after:h-0.5 after:w-0 after:-bottom-1 after:left-0 hover:after:w-full after:transition-all duration-300"
+                        className="text-cyan-400 hover:text-white relative after:bg-white after:absolute after:h-0.5 after:w-0 after:-bottom-1 after:left-0 hover:after:w-full after:transition-all duration-300"
                     >
                         About
                     </Link>
@@ -127,13 +127,13 @@ export default function NavBar() {
                     ) : (
                         !user.isAuthenticated ? (
                             <div className="flex gap-4">
-                                <Button variant="outline" asChild>
+                                <Button variant="outline" className="bg-neutral-950 text-cyan-400" asChild>
                                     <Link to="/login">Login</Link>
                                 </Button>
-                                <Button variant="outline" className="group" asChild>
+                                <Button variant="outline" className="group bg-neutral-950 text-cyan-400" asChild>
                                     <Link to="/register">
                                         Register
-                                        <ArrowRight className="ml-2 z-10 group-hover:ml-3 duration-200" />
+                                        <ArrowRight className="ml-2 z-10 group-hover:ml-3 duration-200 bg-neutral-950 text-cyan-400" />
                                     </Link>
                                 </Button>
                             </div>
@@ -150,7 +150,7 @@ export default function NavBar() {
                                             size="icon"
                                             className="rounded-full hover:bg-black"
                                         >
-                                            <LogOut color="white" />
+                                            <LogOut color="cyan-400" />
                                         </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>

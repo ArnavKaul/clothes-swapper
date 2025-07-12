@@ -19,8 +19,8 @@ const productCards = Array.from({ length: 8 }, (_, i) => ({
 
 const categories = [
   "Sporty",
-  "Bohemian", // Added back based on previous discussion
-  "Grunge",   // Added back based on previous discussion
+  "Bohemian", 
+  "Grunge",   
   "Preppy",
   "Punk",
   "Streetwear",
@@ -33,7 +33,7 @@ const images = ['./images/banner1.jpg', './images/banner2.jpg']
 export default function LandingPage() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true })
 
-  // Ensure emblaApi is available before attempting to call its methods
+  
   const scrollPrev = useCallback(() => {
     if (emblaApi) {
       emblaApi.scrollPrev()
@@ -46,15 +46,14 @@ export default function LandingPage() {
     }
   }, [emblaApi])
 
-  // This useEffect isn't strictly necessary for basic button clicks,
-  // but it's where you'd add listeners for carousel events or debugging
+
   useEffect(() => {
     if (emblaApi) {
-      // Optional: Add a listener to log slide changes for debugging
+      
       emblaApi.on('select', () => {
         console.log('Current slide index:', emblaApi.selectedScrollSnap())
       })
-      // Optional: Clean up listener on unmount
+     
       return () => {
         emblaApi.off('select', () => {
           console.log('Listener removed')
@@ -68,10 +67,10 @@ export default function LandingPage() {
       <main className="max-w-screen-xl mx-auto space-y-10 p-8">
 
         <section className="flex justify-between items-center">
-          <div className="text-2xl font-bold text-pink-800">Clothes Swapper</div>
+          <div className="text-2xl font-bold text-cyan-400"></div>
           <div className="flex gap-2">
-            <Input placeholder="Search..." className="w-64 bg-pink-600 text-white" />
-            <Button className="bg-pink-700 text-white hover:bg-pink-600">Search</Button>
+            <Input placeholder="Search..." className="w-64 bg-cyam-400 text-white placeholder:text-white" />
+            <Button className="bg-cyan-400 text-black hover:bg-cyan-400">Search</Button>
           </div>
         </section>
 
@@ -95,20 +94,19 @@ export default function LandingPage() {
       </div>
     </div>
 
-    {/* LEFT ARROW (outside) */}
-    {/* LEFT ARROW (pushed further left) */}
+    
 <button
   onClick={scrollPrev}
-  className="absolute top-1/2 -left-20 -translate-y-1/2 transform bg-pink-800 p-3 rounded-full text-white z-10 hover:bg-pink-700"
+  className="absolute top-1/2 -left-20 -translate-y-1/2 transform bg-cyan-400 p-3 rounded-full text-white z-10 hover:bg-pink-700"
   aria-label="Previous slide"
 >
   <ChevronLeft size={20} />
 </button>
 
-{/* RIGHT ARROW (pushed further right) */}
+
 <button
   onClick={scrollNext}
-  className="absolute top-1/2 -right-20 -translate-y-1/2 transform bg-pink-800 p-3 rounded-full text-white z-10 hover:bg-pink-700"
+  className="absolute top-1/2 -right-20 -translate-y-1/2 transform bg-cyan-400 p-3 rounded-full text-white z-10 hover:bg-cyan-700"
   aria-label="Next slide"
 >
   <ChevronRight size={20} />
@@ -129,10 +127,10 @@ export default function LandingPage() {
         </Breadcrumb>
 
         <section>
-          <h2 className="text-xl font-semibold text-pink-800 mb-4">Product Listings</h2>
+          <h2 className="text-xl font-semibold text-cyan-600 mb-4">Product Listings</h2>
           <div className="grid grid-cols-4 gap-6">
             {productCards.map((product) => (
-              <Card key={product.id} className="p-4 text-center bg-neutral-950 text-pink-800">
+              <Card key={product.id} className="p-4 text-center bg-neutral-950 text-cyan-400">
                 <img
                   src={product.image}
                   alt={product.title}
@@ -145,9 +143,9 @@ export default function LandingPage() {
         </section>
 
         <div className="flex justify-center gap-4">
-          <Button variant="outline" className="bg-pink-800 text-white">Previous</Button>
-          <Button variant="default" className="bg-pink-800 text-white">1</Button>
-          <Button variant="outline" className="bg-pink-800 text-white">Next</Button>
+          <Button variant="outline" className="bg-cyan-400 text-black">Previous</Button>
+          <Button variant="default" className="bg-cyan-400 text-black">1</Button>
+          <Button variant="outline" className="bg-cyan-400 text-black">Next</Button>
         </div>
       </main>
     </body>

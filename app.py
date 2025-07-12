@@ -10,7 +10,7 @@ from datetime import datetime
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
@@ -83,10 +83,26 @@ def item_used_status():
         print("ERROR: 'item_used_status' document not found in 'categories' collection!")
         return []
     
+from bson import ObjectId
+
 def serialize_doc(doc):
-    if doc and '_id' in doc:
-        doc['_id'] = str(doc['_id'])
-    return doc
+    if isinstance(doc, list):
+        return [serialize_doc(d) for d in doc]
+    elif isinstance(doc, dict):
+        new_doc = {}
+        for k, v in doc.items():
+            if isinstance(v, ObjectId):
+                new_doc[k] = str(v)
+            elif isinstance(v, list):
+                new_doc[k] = [str(i) if isinstance(i, ObjectId) else serialize_doc(i) for i in v]
+            elif isinstance(v, dict):
+                new_doc[k] = serialize_doc(v)
+            else:
+                new_doc[k] = v
+        return new_doc
+    else:
+        return doc
+
 
 
 
@@ -292,14 +308,14 @@ def register():
     usernme and password is added to the users database,
     otherwise the user is redirected to the registration page
     """
-    categories = item_categories()
+    data=request.get_json()
+    categories = serialize_doc(item_categories())
     profile_images = profile_img()
     if request.method == 'POST':
         existing_user = db.users.find_one( 
-            {"username": request.form.get("username")})
+            {"username": data.get("username")})
         if existing_user:
-            flash("A Swapper already has this name, pick a new one!")
-            return redirect(url_for("register"))
+            return jsonify({"success":False, "message":"user already exists"}), 401
 
         user_image = request.form.get("user-img")
         print(user_image)
@@ -310,18 +326,13 @@ def register():
                          "fit=crop&w=1650&q=80"
 
         register = {
-            "username": request.form.get("username"),
-            "password": generate_password_hash(request.form.get("password")),
+            "username": data.get("username"),
+            "password": generate_password_hash(data.get("password")),
             "user_image": user_image,
-            "looking_for": request.form.getlist("looking-for"),
-            "fb_msgr": request.form.get("fb-msgr"),
-            "whatsapp": request.form.get("whatsapp"),
-            "instagram": request.form.get("instagram")
         }
 
         db.users.insert_one(register) 
 
-        # Add new user to matches database to facilitate
         db.matches.insert_one( 
             {"username": request.form.get("username"),
              "liked_by": [],
@@ -329,41 +340,37 @@ def register():
              "matched_creator": []})
 
         session["user"] = request.form.get("username")
-        flash("You're officially a Swapper now, woo!")
         return redirect(url_for('items', username=session['user']))
 
     return jsonify({ "categories":categories,
                            "profile_images":profile_images}), 200
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login", methods=["POST"])
 def login():
     """
-    Checks if username exists in the database and if it does,
-    return the username. The unhashed password from this user's
-    dictionary is chekced against the entered password. If password
-    or username don't match then a flash message is provided to user as
-    feedback.
+    Login user using JSON payload with 'username' and 'password'.
+    Returns JSON response with success status and user info if authenticated.
     """
-    if request.method == "POST":
-        existing_user = db.users.find_one( 
-            {"username": request.form.get("username")})
-        # checks if the hashed password in DB matches entered one
-        if existing_user:
-            if check_password_hash(existing_user["password"],
-                                   request.form.get("password")):
-                session["user"] = request.form.get("username")
-                return redirect(url_for('my_profile',
-                                        username=session["user"]))
-            else:
-                flash("Incorrect Username and/or Password")
-                return redirect(url_for('login'))
-        # If user doesn't exist
-        else:
-            flash("Incorrect Username and/or Password")
-            return redirect(url_for('login'))
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "No JSON data received"}), 400
+    
+    username = data.get("username")
+    password = data.get("password")
 
-    return jsonify({"success": False}), 400
+    if not username or not password:
+        return jsonify({"success": False, "message": "Username and password required"}), 400
+
+    existing_user = db.users.find_one({"username": username})
+    if existing_user and check_password_hash(existing_user["password"], password):
+        session["user"] = username
+        user_data = serialize_doc(existing_user)
+        user_data.pop("password", None)  # Don't expose hashed password
+        return jsonify({"success": True, "user": user_data}), 200
+    else:
+        print("no user")
+        return jsonify({"success": False, "message": "Invalid username or password"}), 401
 
 
 @app.route('/logout')

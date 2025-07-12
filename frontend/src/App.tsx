@@ -7,6 +7,7 @@ import AdminPanel from './AdminPanel'
 import UserDashboard from './UserDashboard'
 import NavBar from './components/ui/navbar'
 import './App.css'
+import HeroLandingPage from './HeroLandingPage'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/items" element={<ItemListing />} />
         <Route path="/items/:id" element={<ItemDetails />} />
+        <Route path="/landing/herolandingpage" element={<HeroLandingPage/>} />
       </Routes>
     </Router>
   )

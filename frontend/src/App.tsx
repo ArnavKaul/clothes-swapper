@@ -11,6 +11,7 @@ import HeroLandingPage from './HeroLandingPage'
 
 function App() {
   return (
+
     <Router>
       <NavBar />
       <Routes>

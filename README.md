@@ -1,4 +1,3 @@
-```markdown
 # 🚀 Clothes Swapper
 
 Swap clothes with your friends and community!

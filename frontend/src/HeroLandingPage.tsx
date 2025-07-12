@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { ArrowRight, Leaf, Users, Recycle, Star, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowRight, Leaf, Users, Recycle, Star, ChevronLeft, ChevronRight, Bell, Search } from "lucide-react"
 
 const featuredItems = [
   {
@@ -49,6 +49,7 @@ const featuredItems = [
 
 export default function HeroLandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [searchQuery, setSearchQuery] = useState("")
   const [testimonials] = useState([
     { 
       name: "Maya Patel", 
@@ -84,27 +85,59 @@ export default function HeroLandingPage() {
     setCurrentSlide((prev) => (prev - 1 + Math.max(1, featuredItems.length - 2)) % Math.max(1, featuredItems.length - 2))
   }
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      console.log(`Searching for "${searchQuery}"...`)
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-black w-full m-0 p-0" style={{margin: 0, padding: 0}}>
       {/* Header */}
-      <header className="w-full py-4 px-6 bg-white shadow-sm">
+      <header className="w-full py-4 px-6 bg-black border-b border-neutral-800 m-0">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-              <Recycle className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 bg-cyan-400 rounded-lg flex items-center justify-center">
+              <Recycle className="w-5 h-5 text-black" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">ReWear</h1>
+            <h1 className="text-2xl font-bold text-cyan-400">Clothes Swapper</h1>
           </div>
-          <nav className="hidden md:flex space-x-6 items-center">
-            <Button variant="ghost" className="text-slate-700 hover:text-slate-900">Home</Button>
-            <Button variant="ghost" className="text-slate-700 hover:text-slate-900">Browse</Button>
-            <Button variant="ghost" className="text-slate-700 hover:text-slate-900">How it Works</Button>
-            <Button variant="ghost" className="text-slate-700 hover:text-slate-900">Login</Button>
-            <Button className="bg-green-600 hover:bg-green-700 text-white">Sign Up</Button>
-          </nav>
+          
+          <div className="hidden md:flex items-center gap-4">
+            <nav className="flex space-x-6 items-center">
+              <Button variant="ghost" className="text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800">Home</Button>
+              <Button variant="ghost" className="text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800">Browse</Button>
+              <Button variant="ghost" className="text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800">How it Works</Button>
+              <Button variant="ghost" className="text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800">Login</Button>
+              <Button className="bg-cyan-400 hover:bg-cyan-500 text-black">Sign Up</Button>
+            </nav>
+            
+            <div className="flex gap-2 items-center ml-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-48 pl-10 pr-4 py-2 bg-neutral-800 border border-neutral-700 text-white placeholder:text-neutral-400 rounded-lg focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 outline-none transition-all"
+                />
+              </div>
+              <Button 
+                onClick={handleSearch}
+                className="bg-cyan-400 text-black hover:bg-cyan-500 font-semibold"
+              >
+                Search
+              </Button>
+              <button className="p-2 hover:bg-neutral-800 rounded-full transition-colors relative ml-2">
+                <Bell className="w-5 h-5 text-cyan-400" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+              </button>
+            </div>
+          </div>
           
           {/* Mobile menu button */}
-          <Button variant="ghost" className="md:hidden">
+          <Button variant="ghost" className="md:hidden text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -113,23 +146,23 @@ export default function HeroLandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-green-50 via-white to-blue-50">
+      <section className="relative py-20 bg-gradient-to-br from-black via-neutral-950 to-black w-full m-0">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-5xl md:text-6xl font-extrabold mb-6 text-slate-900">
+            <h2 className="text-5xl md:text-6xl font-extrabold mb-6 text-white">
               Swap Clothes,
-              <span className="text-green-600"> Save the Planet</span>
+              <span className="text-cyan-400"> Save the Planet</span>
               <span className="text-4xl">🌍</span>
             </h2>
-            <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl text-neutral-300 mb-8 max-w-2xl mx-auto leading-relaxed">
               Join our community of eco-conscious swappers and refresh your wardrobe the sustainable way. 
               Discover unique pieces while reducing fashion waste.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-              <Button className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all">
+              <Button className="bg-cyan-400 hover:bg-cyan-500 text-black px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all">
                 Start Swapping <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
-              <Button variant="outline" className="text-lg px-8 py-4 rounded-xl border-2 hover:bg-slate-50">
+              <Button variant="outline" className="text-lg px-8 py-4 rounded-xl border-2 border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:border-cyan-400">
                 Browse Items
               </Button>
             </div>
@@ -137,12 +170,12 @@ export default function HeroLandingPage() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
               {stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
-                    <stat.icon className="w-6 h-6 text-green-600" />
+                <div key={index} className="text-center bg-neutral-900 p-6 rounded-xl border border-neutral-800 hover:border-cyan-400/50 transition-all">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-cyan-400/20 rounded-full mb-3">
+                    <stat.icon className="w-6 h-6 text-cyan-400" />
                   </div>
-                  <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
-                  <div className="text-slate-600">{stat.label}</div>
+                  <div className="text-2xl font-bold text-white">{stat.value}</div>
+                  <div className="text-neutral-400">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -151,11 +184,11 @@ export default function HeroLandingPage() {
       </section>
 
       {/* Featured Items Carousel */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-black w-full m-0">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">Featured Items</h3>
-            <p className="text-slate-600 text-lg">Discover amazing pieces from our community</p>
+            <h3 className="text-3xl font-bold text-cyan-400 mb-4">Featured Items</h3>
+            <p className="text-neutral-300 text-lg">Discover amazing pieces from our community</p>
           </div>
 
           <div className="relative">
@@ -167,7 +200,7 @@ export default function HeroLandingPage() {
               >
                 {featuredItems.map((item) => (
                   <div key={item.id} className="w-1/3 flex-shrink-0 px-3">
-                    <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div className="bg-neutral-800 rounded-2xl overflow-hidden border border-neutral-700 hover:border-cyan-400/50 transition-all duration-300 transform hover:-translate-y-2 hover:scale-105">
                       <div className="aspect-[4/5] overflow-hidden">
                         <img 
                           src={item.image} 
@@ -177,14 +210,14 @@ export default function HeroLandingPage() {
                       </div>
                       <div className="p-6">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                          <span className="text-sm text-cyan-400 bg-cyan-400/20 px-2 py-1 rounded-full">
                             {item.category}
                           </span>
-                          <span className="text-sm font-medium text-slate-700">Size {item.size}</span>
+                          <span className="text-sm font-medium text-neutral-300">Size {item.size}</span>
                         </div>
-                        <h4 className="font-semibold text-slate-900 text-lg mb-2">{item.title}</h4>
-                        <p className="text-slate-600 text-sm">by {item.owner}</p>
-                        <Button className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white rounded-lg">
+                        <h4 className="font-semibold text-white text-lg mb-2">{item.title}</h4>
+                        <p className="text-neutral-400 text-sm">by {item.owner}</p>
+                        <Button className="w-full mt-4 bg-cyan-400 hover:bg-cyan-500 text-black rounded-lg">
                           View Details
                         </Button>
                       </div>
@@ -197,26 +230,26 @@ export default function HeroLandingPage() {
             {/* Navigation Buttons */}
             <button
               onClick={prevSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all z-10"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-neutral-800 border border-neutral-700 rounded-full p-3 hover:bg-neutral-700 hover:border-cyan-400 transition-all z-10"
             >
-              <ChevronLeft className="w-6 h-6 text-slate-600" />
+              <ChevronLeft className="w-6 h-6 text-cyan-400" />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all z-10"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-neutral-800 border border-neutral-700 rounded-full p-3 hover:bg-neutral-700 hover:border-cyan-400 transition-all z-10"
             >
-              <ChevronRight className="w-6 h-6 text-slate-600" />
+              <ChevronRight className="w-6 h-6 text-cyan-400" />
             </button>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-16 bg-slate-50">
+      <section className="py-16 bg-neutral-950 w-full m-0">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">How It Works</h3>
-            <p className="text-slate-600 text-lg">Simple steps to start swapping</p>
+            <h3 className="text-3xl font-bold text-cyan-400 mb-4">How It Works</h3>
+            <p className="text-neutral-300 text-lg">Simple steps to start swapping</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -226,12 +259,12 @@ export default function HeroLandingPage() {
               { step: "3", title: "Browse & Match", desc: "Find items you love and propose swaps" },
               { step: "4", title: "Swap & Enjoy", desc: "Meet up safely and exchange your items" }
             ].map((item, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
+              <div key={index} className="text-center bg-neutral-900 p-6 rounded-xl border border-neutral-800 hover:border-cyan-400/50 transition-all">
+                <div className="w-16 h-16 bg-cyan-400 text-black rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                   {item.step}
                 </div>
-                <h4 className="text-xl font-semibold text-slate-900 mb-2">{item.title}</h4>
-                <p className="text-slate-600">{item.desc}</p>
+                <h4 className="text-xl font-semibold text-white mb-2">{item.title}</h4>
+                <p className="text-neutral-400">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -239,22 +272,22 @@ export default function HeroLandingPage() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-16 bg-green-50">
+      <section className="py-16 bg-black w-full m-0">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">What Our Swappers Say</h3>
-            <p className="text-slate-600 text-lg">Real stories from our amazing community</p>
+            <h3 className="text-3xl font-bold text-cyan-400 mb-4">What Our Swappers Say</h3>
+            <p className="text-neutral-300 text-lg">Real stories from our amazing community</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all">
+              <div key={index} className="bg-neutral-800 rounded-2xl border border-neutral-700 p-8 hover:border-cyan-400/50 transition-all hover:scale-105">
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-slate-700 text-lg italic mb-6">"{testimonial.text}"</p>
+                <p className="text-neutral-300 text-lg italic mb-6">"{testimonial.text}"</p>
                 <div className="flex items-center">
                   <img 
                     src={testimonial.avatar} 
@@ -262,8 +295,8 @@ export default function HeroLandingPage() {
                     className="w-12 h-12 rounded-full object-cover mr-4"
                   />
                   <div>
-                    <p className="font-semibold text-slate-900">{testimonial.name}</p>
-                    <p className="text-slate-600 text-sm">Verified Swapper</p>
+                    <p className="font-semibold text-white">{testimonial.name}</p>
+                    <p className="text-neutral-400 text-sm">Verified Swapper</p>
                   </div>
                 </div>
               </div>
@@ -273,63 +306,80 @@ export default function HeroLandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-green-700">
+      <section className="py-20 bg-gradient-to-r from-cyan-600 to-cyan-500">
         <div className="max-w-4xl mx-auto text-center px-6">
-          <h3 className="text-4xl font-bold text-white mb-6">
+          <h3 className="text-4xl font-bold text-black mb-6">
             Ready to Transform Your Wardrobe?
           </h3>
-          <p className="text-green-100 text-xl mb-8">
+          <p className="text-black/80 text-xl mb-8">
             Join thousands of happy swappers and start your sustainable fashion journey today.
           </p>
-          <Button className="bg-white text-green-600 hover:bg-green-50 px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all">
+          <Button className="bg-black text-cyan-400 hover:bg-neutral-800 px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all">
             Get Started Now <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-12">
+      <footer className="bg-black text-white py-12 border-t border-neutral-800 w-full m-0">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                  <Recycle className="w-5 h-5 text-white" />
+                <div className="w-8 h-8 bg-cyan-400 rounded-lg flex items-center justify-center">
+                  <Recycle className="w-5 h-5 text-black" />
                 </div>
-                <h4 className="text-xl font-bold">ReWear</h4>
+                <h4 className="text-xl font-bold text-cyan-400">Clothes Swapper</h4>
               </div>
-              <p className="text-slate-400">Sustainable fashion for a better tomorrow.</p>
+              <p className="text-neutral-400">Sustainable fashion for a better tomorrow.</p>
             </div>
             <div>
-              <h5 className="font-semibold mb-3">Platform</h5>
-              <ul className="space-y-2 text-slate-400">
+              <h5 className="font-semibold mb-3 text-cyan-400">Platform</h5>
+              <ul className="space-y-2 text-neutral-400 hover:*:text-neutral-300 *:cursor-pointer *:transition-colors">
                 <li>How it Works</li>
                 <li>Browse Items</li>
                 <li>Safety Guidelines</li>
               </ul>
             </div>
             <div>
-              <h5 className="font-semibold mb-3">Support</h5>
-              <ul className="space-y-2 text-slate-400">
+              <h5 className="font-semibold mb-3 text-cyan-400">Support</h5>
+              <ul className="space-y-2 text-neutral-400 hover:*:text-neutral-300 *:cursor-pointer *:transition-colors">
                 <li>Help Center</li>
                 <li>Contact Us</li>
                 <li>Community Guidelines</li>
               </ul>
             </div>
             <div>
-              <h5 className="font-semibold mb-3">Company</h5>
-              <ul className="space-y-2 text-slate-400">
+              <h5 className="font-semibold mb-3 text-cyan-400">Company</h5>
+              <ul className="space-y-2 text-neutral-400 hover:*:text-neutral-300 *:cursor-pointer *:transition-colors">
                 <li>About Us</li>
                 <li>Privacy Policy</li>
                 <li>Terms of Service</li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-800 mt-8 pt-8 text-center text-slate-400">
-            <p>&copy; 2024 ReWear. All rights reserved.</p>
+          <div className="border-t border-neutral-800 mt-8 pt-8 text-center text-neutral-400">
+            <p>&copy; 2024 Clothes Swapper. All rights reserved.</p>
           </div>
         </div>
       </footer>
+
+      {/* Floating Elements */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="bg-cyan-400 text-black p-4 rounded-full shadow-lg hover:bg-cyan-500 transition-all cursor-pointer hover:scale-110">
+          <ArrowRight className="w-6 h-6" />
+        </div>
+      </div>
+
+      {/* Floating Navigation */}
+      <div className="fixed bottom-6 left-6 z-50">
+        <div className="bg-neutral-800 border border-neutral-700 rounded-full px-4 py-2 shadow-lg">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+            <span className="text-cyan-400 text-sm font-medium">Home</span>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

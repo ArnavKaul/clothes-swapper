@@ -7,10 +7,10 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from flask_paginate import Pagination, get_page_args
-
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
@@ -37,29 +37,6 @@ except Exception as e:
     print(f"somethign terrible went wronf: {e}")
     import sys
     sys.exit(1)
-
-
-def pag_items(items):
-    """
-    Uses flask_pagination and list methods to display 9 items per page
-    sorted by the most recently added item.
-    ***Page pagination code was modified from mozillazg GitHub demo and
-    Pretty Printed Youtube Tutorial on Query Pagination in Flask and MongoDB***
-    """
-    page, per_page, offset = get_page_args(page_parameter='page',
-                                           per_page_parameter='per_page')
-    limit = 9
-    offset = page * limit - limit
-    total = len(items)
-    return items[offset: offset + limit]
-
-
-def pagination_arg(items):
-    page, per_page, offset = get_page_args(page_parameter='page',
-                                           per_page_parameter='per_page')
-    total = len(items)
-    return Pagination(page=page, per_page=9, total=total,
-                      css_framework="bootstrap3")
 
 
 def item_categories():
@@ -111,6 +88,36 @@ def serialize_doc(doc):
         doc['_id'] = str(doc['_id'])
     return doc
 
+
+
+@app.route("/auth_status", methods=["GET"])
+def auth_status():
+    """
+    Checks if a user is logged in and returns their data.
+    This endpoint is for the React frontend to consume.
+    """
+    if "user" in session:
+        print(session)
+        username = session["user"]
+        
+        user_data = db.users.find_one({"username": username})
+        if user_data:
+            return jsonify({
+                "isAuthenticated": True,
+                "user": serialize_doc(user_data)
+            }), 200
+        else:
+            session.pop("user", None) 
+            return jsonify({
+                "isAuthenticated": False,
+                "user": None
+            }), 200
+    else:
+        return jsonify({
+            "isAuthenticated": False,
+            "user": None
+        }), 200
+    
 
 @app.route("/")
 @app.route("/home")

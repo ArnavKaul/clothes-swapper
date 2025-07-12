@@ -1,15 +1,18 @@
-import { useState } from 'react'
-import LandingPage from './LandingPage'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Router, Routes, Route
+import LandingPage from './LandingPage';
+import NavBar from './components/ui/navbar'; 
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <LandingPage/>
-    </>
-  )
+    <Router>
+      <NavBar /> 
+      <Routes> 
+        <Route path="/" element={<LandingPage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

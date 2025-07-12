@@ -53,22 +53,7 @@ The unique selling point lies in its user-friendly interface, comprehensive even
 - 🎨 **UI/UX**: Intuitive and responsive design using Material UI for a seamless user experience.
 - 📱 **Responsive**: Cross-platform compatibility accessible on desktops, tablets, and mobile devices.
 
-## 🎬 Demo
 
-🔗 **Live Demo**: [https://clothes-swapper-mokshshahh.vercel.app/](https://clothes-swapper-mokshshahh.vercel.app/)
-
-### Screenshots
-
-![Home Page](screenshots/home.png)
-*Home page showcasing featured events and categories.*
-
-![Event Page](screenshots/event.png)
-*Detailed view of an event with date, location, and participants.*
-
-![Profile Page](screenshots/profile.png)
-*User profile page with listed items and event history.*
-
-## 🚀 Quick Start
 
 Clone and run in 3 steps:
 

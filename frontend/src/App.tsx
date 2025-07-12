@@ -1,18 +1,26 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Router, Routes, Route
-import LandingPage from './LandingPage';
-import NavBar from './components/ui/navbar'; 
-import './App.css';
+import { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import LandingPage from './LandingPage'
+import ItemDetails from './ItemDetails'
+import ItemListing from './ItemListing'
+import AdminPanel from './AdminPanel'
+import UserDashboard from './UserDashboard'
+import NavBar from './components/ui/navbar'
+import './App.css'
 
 function App() {
-
   return (
     <Router>
-      <NavBar /> 
-      <Routes> 
+      <NavBar />
+      <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="/items" element={<ItemListing />} />
+        <Route path="/items/:id" element={<ItemDetails />} />
       </Routes>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

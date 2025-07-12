@@ -340,7 +340,7 @@ def register():
              "matched_creator": []})
 
         session["user"] = request.form.get("username")
-        return redirect(url_for('items', username=session['user']))
+        return jsonify({"username":session['user']})
 
     return jsonify({ "categories":categories,
                            "profile_images":profile_images}), 200
@@ -381,7 +381,7 @@ def logout():
     """
     flash("See you soon")
     session.pop("user")
-    return redirect(url_for("login"))
+    return jsonify({"success":True})
 
 
 @app.route("/add_item", methods=["GET", "POST"])
@@ -421,7 +421,7 @@ def add_item():
         }
         db.items.insert_one(new_item) 
         flash("Item added succesfully")
-        return redirect(url_for('items', username=session['user']))
+        return jsonify({"username":session['user']}), 200
 
     user_data = db.users.find_one( 
         {"username": session["user"]})
@@ -460,7 +460,7 @@ def edit_item(item_id):
         }
         db.items.update_one({"_id": ObjectId(item_id)}, {"$set": edited_item}) 
         flash("'{}' updated succesfully".format(edited_item["item_name"]))
-        return redirect(url_for('items', username=session['user']))
+        return jsonify({"username":session['user']}), 200
 
     item = db.items.find_one( 
         {"_id": ObjectId(item_id)})
@@ -478,7 +478,7 @@ def delete_item(item_id):
     # Delete selected item
     db.items.delete_one({'_id': ObjectId(item_id)}) 
     flash("Item deleted succesfully!")
-    return redirect(url_for('items', username=session['user']))
+    return jsonify({"username":session['user']}), 200
 
 
 @app.route('/liked_item/<item_id>/<action>')
@@ -495,7 +495,7 @@ def liked_item(item_id, action):
     item = db.items.find_one({"_id": ObjectId(item_id)})
     if not item:
         flash("Item not found!")
-        return redirect(request.referrer)
+        return jsonify({"message":True}), 200
 
     item_creator = item["created_by"]
     
@@ -528,7 +528,8 @@ def liked_item(item_id, action):
             db.matches.update_one({"username": item_creator}, 
                                         {'$pull': {'liked_by': user}})
 
-    return redirect(request.referrer)
+    return jsonify({"message":True}), 200
+
 
 
 @app.route('/flagged_item/<item_id>/<action>')
@@ -544,7 +545,8 @@ def flagged_item(item_id, action):
         db.items.update_one({"_id": ObjectId(item_id)}, 
                                   {'$set': {'flagged': 'N'}})
 
-    return redirect(request.referrer)
+    return jsonify({"message":True}), 200
+
 
 
 @app.route('/my_profile/<username>')
@@ -600,7 +602,7 @@ def edit_profile(username):
 
         db.users.update_one({"username": session['user']}, {"$set": edited_profile})
         flash(f"{edited_profile['username']}'s profile updated succesfully")
-        return redirect(url_for('my_profile', username=username))
+        return jsonify({"username":username})
 
     return jsonify({ "categories":categories,
                     "user":user_data,

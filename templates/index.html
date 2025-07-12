@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+<!-- Page title -->
+{% block title %}SWAP your clothes{% endblock %}
+
+<!-- Add active class to the navbar and sidenav -->
+{% block nav_home %}active{% endblock %}
+{% block sidenav_home %}active-sidenav{% endblock %}
+
+{% block content %}
+<section class="landing-page">
+    <!-- Landing Page graphic, hero image and content -->
+    <div class="landing-image-container center">
+        <!-- Top Landing Page section -->
+        <img src="{{ url_for('static', filename='graphics/feet.png') }}" alt="feet">
+        <div class="container center">
+            <div class="landing-content-container z-depth-4 border-radius-m">
+                <h1 id="swap-heading">SWAP <span>your clothes</span></h1>
+                <div class="landing-content">
+                    <p>Ready for a closet makeover?</p>
+                    <p>Add items you're ready to say goodbye to and swap them for someone else's pre-<i class="fas fa-heart accent-text"></i> pieces </p>
+                    <p class="colored-icons">Add <i class="fas fa-angle-double-right"></i> Like <i class="fas fa-angle-double-right"></i> Match <i class="fas fa-angle-double-right"></i> <span>SWAP</span></p>
+                    {% if session.user %}
+                        <a href="{{ url_for('items') }}" class="swap-btn filled-red border-radius-m">Get Started</a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}" class="swap-btn filled-red border-radius-m">Get Started</a>
+                    {% endif %}
+                    <p class="help-btn">
+                        <a href="#about-modal" class="grey-text text-darken-1 modal-trigger"><i class="far fa-question-circle"></i></a>
+                    </p>
+                </div>    
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hot Items section -->
+<section class="hot-items">
+    <h2 class="center-align">Hot Items <i class="fas fa-fire-alt"></i></h2>
+        <!-- Display Items -->
+        <div class="row">
+            {% for item in items %}
+            <div class="col s12 m6 l4 hot-item-card">
+                <div class="card center z-depth-4">
+                    <!-- Card Image -->
+                    <div class="card-image">
+                        <img src="{{ item.item_image }}" class="item-image" alt="item image">
+                        <!-- Checks if the logged in user already likes the item and display the like button accordingly -->
+                        <!-- If user has logged in and is the creator of item -->
+                        {% if session.user == item.created_by %}
+                            <a class="btn-floating halfway-fab waves-effect waves-light white">
+                                <i class="far fa-heart like-button-disabled"></i></a>
+                        <!-- If user is logged in and already likes the item  -->
+                        {% elif session.user in item.liked_by %}
+                            <a href="{{ url_for('liked_item', item_id=item._id, action='unlike') }}"
+                                class="btn-floating halfway-fab waves-effect waves-light white">
+                                <i class="fas fa-heart like-button"></i></a>
+                        <!-- If user is logged in and hasn't liked the item -->
+                        {% elif session.user %}
+                            <a href="{{ url_for('liked_item', item_id=item._id, action='like') }}"
+                                class="btn-floating halfway-fab waves-effect waves-light white">
+                                <i class="far fa-heart like-button"></i></a>
+                        <!-- If user hasn't logged in -->
+                        {% else %}
+                            <a class="btn-floating halfway-fab waves-effect waves-light white tooltipped" data-position="bottom" data-tooltip="Register to like an item">
+                                <i class="far fa-heart like-button-disabled"></i></a>
+                        {% endif %}    
+                    </div>
+                    <!-- Card Content -->
+                    <div class="card-content">
+                        <div class="item-content">
+                            <span class="card-title">{{ item.item_name }}</span>
+                            <p class="item-short-description activator">{{ item.short_description }}</p>
+                            <p class="activator accent-text" id="display-more">more</p>
+                        </div>
+                        <!-- Item Footer displaying creator, delete and flag buttons -->
+                        <div class="row item-footer">
+                        <!-- In case of a match  display creators socials in a dropdown so the user can contact them -->
+                        {% if session.user in item.liked_by and item.created_by in liked %}
+                        <div class="col s5 item-creator-container">
+                            {% for data in all_users %}
+                                {% if item.created_by == data.username %}
+                                    <p class="left item-creator-active accent-text"><img src="{{data.user_image}}" alt="{{data.username}}'s profile image" class="z-depth-2 border-radius-m profile-icon"> <span class="profile-name">{{ item.created_by }}</span></p>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                            <div class="col s5 item-socials-container">
+                                <a href="https://m.me/{{ user['fb_msgr'] }}" target="_blank" class="blue-text"><i class="fab fa-facebook-messenger"></i></a>
+                                <a href="https://wa.me/{{ user['whatsapp'] }}" target="_blank" class="green-text text-accent-4"><i class="fab fa-whatsapp"></i></a>
+                                <a href="https://instagram.com/{{ user['instagram'] }}" target="_blank" class="pink-text text-darken-1"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        <!--If it's not a match, show unclickable creators username  -->
+                        {% else %}
+                            <div class="col s6">
+                            {% for data in all_users %}
+                                {% if item.created_by == data.username %}
+                                <p class="left item-creator"><img src="{{data.user_image}}" alt="{{data.username}}'s profile image" class="z-depth-2 border-radius-m profile-icon"> <span class="profile-name">{{ item.created_by }}</span></p>
+                                {% endif %}
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Item Icon footer -->
+                        {% if session.user %}
+
+                            <!-- Footer displayed to Admin -->
+                            {% if session.user == 'Admin' %}
+                                <!-- footer if admin hasn't like the item -->
+                                {% if session.user not in item.liked_by %}
+                                <div class="col s6 item-icon-container right">
+                                    <!-- If Admin is also a creator of an item, display edit button -->
+                                    {% if item.created_by == 'Admin' %}
+                                        <a href="{{ url_for('edit_item', item_id=item._id) }}"><i class="fas fa-pencil-alt"></i></a>
+                                    {% endif %}
+
+                                    <!-- Delete button if admin hasn't liked the item -->
+                                    <a href="{{ url_for('delete_item', item_id = item._id) }}" class="delete-confirm"><i class="far fa-trash-alt"></i></a>
+
+                                    <!-- Flag button - able to flag and unflag -->
+                                    {% if item.flagged == "Y" %}
+                                        <a href="{{ url_for('flagged_item', item_id=item._id, action='unflag') }}" class="accent-text"><i class="fas fa-flag"></i></a>
+                                    {% else %}
+                                        <a href="{{ url_for('flagged_item', item_id=item._id, action='flag') }}" class="flag-confirm"><i class="far fa-flag"></i></a>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                    <!-- If admin has liked an item it should not be deleted so delete button is omitted -->
+                                    <div class="col s2 item-icon-container right">
+                                    <!-- Flag button - able to flag and unflag -->
+                                    {% if item.flagged == "Y" %}
+                                        <a href="{{ url_for('flagged_item', item_id=item._id, action='unflag') }}" class="accent-text"><i class="fas fa-flag"></i></a>
+                                    {% else %}
+                                        <a href="{{ url_for('flagged_item', item_id=item._id, action='flag') }}" class="flag-confirm"><i class="far fa-flag"></i></a>
+                                    {% endif %}
+                                    </div>
+                                {% endif %}
+
+                            <!-- Footer displayed to Item Creator -->
+                            {% elif session.user == item.created_by %}
+                                <div class="col s6 item-icon-container">
+                                    <a href="{{ url_for('delete_item', item_id = item._id) }}" class="delete-confirm"><i class="far fa-trash-alt"></i></a>
+                                    <a href="{{ url_for('edit_item', item_id=item._id) }}"><i class="fas fa-pencil-alt"></i></a>
+                                </div>
+                            
+                            <!-- Footer displayed to a logged in user who isn't an admin or the item creator-->
+                            {% else %}
+                                <!-- Let users flag item but not unflag them -->
+                                <div class="col s2 item-icon-container right">
+                                    {% if item.flagged == "Y" %}
+                                        <i class="fas fa-flag accent-text"></i>
+                                    {% else %}
+                                        <a href="{{ url_for('flagged_item', item_id=item._id, action='flag') }}" class="flag-confirm"><i class="far fa-flag"></i></a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        </div>
+                    </div>
+                    <!-- More information displayed using card reveal component -->
+                    <div class="card-reveal">
+                        <span class="card-title card-reveal-title">{{ item.item_name }}<i class="fas fa-times right accent-text"></i></span>
+                        <p>{{ item.long_description }}</p>
+                        <hr>
+                        <!-- Specific item details -->
+                        <div class="row">
+                            <div class="col s5 item-labels right-align">Category</div>
+                            <div class="col s2 item-icons center-align"><i class="fas fa-sitemap secondary-accent-text"></i></div>
+                            <div class="col s5 item-values left-align">{{ item.category }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col s5 item-labels right-align">Size</div>
+                            <div class="col s2 item-icons center-align"><i class="fas fa-ruler secondary-accent-text"></i></div>
+                            <div class="col s5 item-values left-align">{{ item.size }} ({{ item.size_country }}) <a href="https://www.sizeguide.net/" target="_blank" class="tooltipped grey-text" data-position="bottom" data-tooltip="Not Sure about sizes?"><i class="far fa-question-circle"></i></a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col s5 item-labels right-align">Fit</div>
+                            <div class="col s2 item-icons center-align"><i class="fas fa-transgender-alt secondary-accent-text"></i></div>
+                            <div class="col s5 item-values left-align">{{ item.size_gender }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col s5 item-labels right-align">Used</div>
+                            <div class="col s2 item-icons center-align"><i class="far fa-clock secondary-accent-text"></i></div>
+                            <div class="col s5 item-values left-align">{{ item.used_status }}</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Count of likes -->
+                <div class="center liked-count"><i class="fas fa-heart accent-text"></i> {{ item.liked_count }}</div>
+            </div>
+        {% endfor %}
+        <!-- All Items button -->
+        <div class="row">
+            <div class="col s12 center">
+                <a href="{{ url_for('items', username=session.user) }}" class="swap-btn outlined-red border-radius-m center-align profile-btn">
+                    All Items
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+    
+{% endblock %}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="author" content="Liga Baikova">
+        <meta name="description" content="This website allows users to swap their clothes with others to encourage sustainable living.">
+        <title>{% block title %}{% endblock %}</title>
+        <!-- Add favicon -->
+        <link rel="icon" href="{{ url_for('static', filename='graphics/SWAP-logo.png') }}">
+        <!-- Add Materialize CDN -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+            type="text/css"/>
+        <!-- Add Slick css and css theme for slick carousel -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slick/slick.css')}}"/>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slick/slick-theme.css')}}"/>
+        <!-- Add Font Awesome icon kit -->
+        <script
+            src="https://kit.fontawesome.com/d6343cbdf9.js"
+            crossorigin="anonymous">
+        </script>
+        <!-- Link to static stylesheet -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    </head>
+
+    <body>
+        <header>
+            <!-- Navbar for larger screens -->
+            <nav class="nav-extended gradient-bkg" id="top">
+                <div class="nav-wrapper">
+                    <a href="{{ url_for('home') }}" class="brand-logo center"><img src="{{ url_for('static', filename='graphics/SWAP-logo.png') }}" alt="Swap logo - double sided arrow in a shape of S">WAP</a>
+                    <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="fas fa-bars"></i></a>
+                    <ul class="left hide-on-med-and-down">
+                        <li><a href="{{ url_for('home') }}" class="hvr-underline-from-center {% block nav_home %}{% endblock %}">Home</a></li>
+                        <!-- Differentiate between a loggedx in user and a guest without an account -->
+                        <li><a href="{{ url_for('items') }}" class="hvr-underline-from-center {% block nav_items %}{% endblock %}">Items</a></li>
+                    </ul>
+                    <ul class="right hide-on-med-and-down">
+                        <!-- Display my profile, add item and log out pages if user is logged in -->
+                        {% if session.user and session.user %}
+                            <li><a href="{{ url_for('my_profile', username=session.user) }}" class="hvr-underline-from-center {% block nav_my_profile %}{% endblock %}">My Profile <img src="{{user['user_image']}}" alt="{{user['username']}}'s profile image" class="z-depth-2 border-radius-m profile-icon nav-icon"></a></li>
+                            <li><a href="{{ url_for('add_item') }}" class="hvr-underline-from-center {% block nav_add_item %}{% endblock %}">Add Item</a></li>
+                            <li><a href="{{ url_for('logout') }}" class="hvr-underline-from-center {% block nav_logout %}{% endblock %}">Log Out</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('register') }}" class="hvr-underline-from-center {% block nav_register %}{% endblock %}">Register</a></li>
+                            <li><a href="{{ url_for('login') }}" class="hvr-underline-from-center {% block nav_login %}{% endblock %}">Log In</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+            
+            <!-- Collapsable Navbar for mobile screen sizes -->
+            <ul class="sidenav" id="mobile-demo">
+                <li><a href="{{ url_for('home') }}" class="{% block sidenav_home %}{% endblock %}">Home</a></li>
+                <li><a href="{{ url_for('items') }}" class="{% block sidenav_items %}{% endblock %}">Items</a></li>
+                <!-- Display my profile, add item and log out pages if user is logged in -->
+                {% if session.user %}
+                    <li><a href="{{ url_for('my_profile', username=session.user) }}" class="{% block sidenav_my_profile %}{% endblock %}">My Profile</a></li>
+                    <li><a href="{{ url_for('add_item') }}" class="{% block sidenav_add_item %}{% endblock %}">Add Item </a></li>
+                    <li><a href="{{ url_for('logout') }}" class="{% block sidenav_logout %}{% endblock %}">Log Out</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('register') }}" class="{% block sidenav_register %}{% endblock %}">Register</a></li>
+                    <li><a href="{{ url_for('login') }}" class="{% block sidenav_login %}{% endblock %}">Login</a></li>
+                {% endif %}
+            </ul>
+            {% block landing_graphic %}{% endblock %}
+        </header>
+
+        <section class="z-depth-3 flash-container">
+            <!-- Display Flash messages -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="row">
+                            <h4 class="center-align">{{ message }}</h4>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </section>     
+
+        <main>{% block content %} {% endblock content %}</main>
+
+        <!-- About Modal -->
+        <section>
+            <div id="about-modal" class="modal border-radius-m">
+                <div class="modal-content">
+                    <h4 class="accent-text">How it works? <i class="fas fa-route"></i></h4>
+                    <div>
+                        <p><i class="fas fa-plus accent-text"></i> Create an account <i class="fas fa-user-circle"></i></p>
+                        <p><i class="fas fa-plus accent-text"></i> Add any clothing pieces or accessories that you are no longer getting use out of</p>
+                        <p><i class="fas fa-plus accent-text"></i> Browse through other Swappers' added pieces on <a href="{{url_for('items')}}" class="accent-text hover-undrline">Items page</a></p>
+                        <p><i class="fas fa-plus accent-text"></i> If an item tickles your fancy, make sure to like it <i class="fas fa-heart"></i>!</p>
+                        <p><i class="fas fa-plus accent-text"></i> When you and another Swapper like each others items, you'll match (hooray!)</p>
+                        <p><i class="fas fa-plus accent-text"></i> You'll be able to see each others socials and organize the SWAP</p>
+                        <p><i class="fas fa-plus accent-text"></i> Not only is this fun, but also Environmentally friendly <i class="fas fa-recycle"></i></p>
+                    </div>
+                    <p class="center-align"><strong>Happy Swapping <i class="fas fa-grin-beam"></i> </strong></p>
+                </div>
+            </div> 
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col s6 m6">
+                        <ul class="left footer-nav footer-links">
+                            <li><a href="#about-modal" class="modal-trigger">About</a></li>
+                            <li><a href="#top">Go to Top <i class="fas fa-angle-up"></i> </a></li>
+                        </ul>
+                    </div>
+                    <div class="col s6 m6">
+                        <ul class="right footer-nav footer-socials">
+                            <li><a href="https://twitter.com/home" target="_blank"><i class="fab fa-twitter"></i></a></li>
+                            <li><a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a></li>
+                            <li><a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- jQuery CDN -->
+        <script
+            src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+            crossorigin="anonymous">
+        </script>
+        <!-- Add JS needed for Materialize -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <!-- Materialize Select fix js file from  https://github.com/Dogfalo/materialize/blob/c0da34049deec36efbd4681f73b3446e92918ca8/js/select.js -->
+        <script src="{{ url_for('static', filename='js/select.js') }}"></script>
+        <!-- Sweetalert CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.0/dist/sweetalert2.all.min.js"></script>
+        <!-- Include a polyfill for ES6 Promises for IE11 Sweetalert -->
+        <script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.js"></script>
+        <!-- Include slick js file for slick carousel -->
+        <script src="{{ url_for('static', filename='slick/slick.min.js') }}"></script>
+        <!-- Link up static js file -->
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    </body>
+</html>

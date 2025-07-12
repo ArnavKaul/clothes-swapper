@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+<!-- Add Page Title -->
+{% block title %}Add Item | SWAP{% endblock %}
+
+<!-- Add active class to the  navbar and sidebar -->
+{% block nav_add_item %}active{% endblock %}
+{% block sidenav_add_item %}active-sidenav{% endblock %}
+
+<!-- Main content -->
+{% block content %}
+
+<div class="row container">
+    <!-- New Item Form -->
+    <form
+    class="col s12 form-element z-depth-4 border-radius-sm"
+    method="POST"
+    action="{{ url_for('add_item') }}">
+        <h3 class="center">New Item</h1>
+        <!-- Item Name -->
+        <div class="row mb-0">
+            <div class="input-field col s12">
+                <input
+                    id="item_name"
+                    name="item_name"
+                    type="text"
+                    minlength="3"
+                    maxlength="20"
+                    class="validate"
+                    data-length="20"
+                    required/>
+                <label for="item_name">Item Name:</label>
+            </div>
+        </div>
+
+        <!-- Item Image -->
+        <div class="row input-container">
+            <div class="input-field col s12">
+                <input
+                    id="item_image"
+                    name="item_image"
+                    type="text"
+                    class="validate"/>
+                <label for="item_image">
+                    Picture Link (Optional) 
+                </label>
+            </div>
+        </div>
+
+        <!-- Short Description for the item card front -->
+        <div class="row input-container mb-0">
+            <div class="input-field col s12">
+                <textarea
+                    id="short_desc"
+                    name="short_desc"
+                    maxlength="100"
+                    data-length="100"
+                    class="materialize-textarea validate"
+                    required></textarea>
+                <label for="short_desc">Short Description:</label>
+            </div>
+        </div>
+
+        <!-- Long Description for the item card back -->
+        <div class="row input-container mb-0">
+            <div class="input-field col s12">
+                <textarea
+                    id="long_desc"
+                    name="long_desc"
+                    maxlength="300"
+                    data-length="300"
+                    class="materialize-textarea validate"
+                    required></textarea>
+                <label for="long_desc">Long Description:</label>
+            </div>
+        </div>
+
+        <!-- Category selector -->
+        <div class="row input-container">
+            <div class="input-field col s12">
+                <select name="category" class="validate" required>
+                    <option value="" disabled selected>Category</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+                <label class="options-label">Category</label>
+            </div>
+        </div>
+
+        <!-- Item Sizing -->
+        <div class="row input-container">
+            <div class="input-field col s6">
+                <input
+                    id="size"
+                    name="size"
+                    type="text"
+                    maxlength="5"
+                    class="validate"
+                    required></input>
+                <label for="size">Size: </label>
+            </div>
+            <div class="input-field col s6">
+                <select name="size_region" class="validate" required>
+                    <option value="" disabled selected>From</option>
+                    {% for size_region in item_size %}
+                        <option value="{{ size_region }}">{{ size_region }}</option>
+                    {% endfor %}
+                </select>
+                <label class="options-label">From:</label>
+            </div>
+        </div>
+
+        <!-- Item Fit -->
+        <div class="row input-container">
+            <div class="input-field col s12">
+                <select name="item_fit" class="validate" required>
+                    <option value="" disabled selected>Fit</option>
+                    {% for fit in item_fit %}
+                        <option value="{{ fit }}">{{ fit }}</option>
+                    {% endfor %}
+                </select>
+                <label class="options-label">Fit</label>
+            </div>
+        </div>
+
+        <!-- Used Status -->
+        <div class="row input-container">
+            <div class="input-field col s12">
+                <select name="used_status" class="validate" required>
+                    <option value="" disabled selected>Used</option>
+                    {% for used in item_used %}
+                        <option value="{{ used }}">{{ used }}</option>
+                    {% endfor %}
+                </select>
+                <label class="options-label">Used</label>
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <div class="row centered-row">
+            <a href="{{ url_for('add_item') }}" class="col s5 m4 l3 swap-btn outlined-red border-radius-m centered-elem center-align">
+                Reset
+            </a>
+            <button
+                class="col s5 m4 l3 swap-btn filled-red gradient-bkg border-radius-m centered-elem"
+                type="submit"
+                name="action">
+                Add Item
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

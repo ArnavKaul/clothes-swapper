@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+<!-- Add Page Title -->
+{% block title %}Login | SWAP{% endblock %}
+
+<!-- Add active class to the  navbar and sidebar -->
+{% block nav_login %}active{% endblock %}
+{% block sidenav_login %}active-sidenav{% endblock %}
+
+<!-- Main content -->
+{% block content %}
+
+<div class="row container mb-0">
+    <!-- Log In form -->
+    <form
+    class="col s12 form-element z-depth-4 border-radius-m"
+    method="POST"
+    action="{{ url_for('login') }}">
+        <h3 class="center-align">Login</h3>
+        <!-- Username -->
+        <div class="row">
+            <div class="input-field col s12">
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    minlength="3"
+                    maxlength="15"
+                    pattern="^[a-zA-Z0-9]{3,15}$"
+                    class="validate"
+                    required/>
+                <label for="username">Username:</label>
+            </div>
+        </div>
+        <!-- Password -->
+        <div class="row mb-0">
+            <div class="input-field col s12">
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    minlength="8"
+                    maxlength="20"
+                    pattern="^[a-zA-Z0-9_-]{8,20}$"
+                    class="validate"
+                    required/>
+                <label for="password">Password</label>
+            </div>
+        </div>
+        <!-- Submit button -->
+        <div class="row centered-row">
+            <button
+                class="col s5 m4 l3 swap-btn filled-red border-radius-m centered-elem"
+                type="submit"
+                name="action">
+                Log In
+            </button>
+        </div>
+    </form>
+</div>
+<!-- Link redirrecting new users to Register page -->
+<div class="row">
+    <div class="col s12">
+        <p class="center-align">
+            Not a Swapper yet?
+            <a href="{{ url_for('register') }}" class="accent-text hover-undrline">Register</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

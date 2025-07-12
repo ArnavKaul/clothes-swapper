@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+<!-- Add Page Title -->
+{% block title %}Register | SWAP{% endblock %}
+
+<!-- Add active class to the  navbar and sidebar -->
+{% block nav_register %}active{% endblock %}
+{% block sidenav_register %}active-sidenav{% endblock %}
+
+<!-- Main content -->
+{% block content %}
+
+<div class="row container mb-0">
+    <!-- Registration form -->
+    <form
+        class="col s12 form-element z-depth-4 border-radius-m register"
+        method="POST"
+        action="{{ url_for('register') }}">
+        <h3 class="center-align">Register</h3>
+        <h6 class="center accent-text">Basics (Required) <i class="far fa-question-circle tooltipped" data-position="left" data-tooltip="Only contain letters, numbers, '-' and '_'"></i></h6>
+        <!-- Username -->
+        <div class="row mb-0">
+            <div class="col s12 input-field">
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    minlength="3"
+                    maxlength="15"
+                    pattern="^[a-zA-Z0-9_-]{3,15}$"
+                    data-length="15"
+                    class="validate"
+                    required/>
+                <label for="username">Username:</label>
+                <span class="helper-text" data-error="3-15 characters" data-success=""></span>
+            </div>
+        </div>
+        <!-- Password -->
+        <div class="row input-container">
+            <div class="input-field col s12">
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    minlength="8"
+                    maxlength="20"
+                    pattern="^[a-zA-Z0-9_-]{8,20}$"
+                    data-length="20"
+                    class="validate"
+                    required/>
+                <label for="password">Password:</label>
+                <span class="helper-text" data-error="8-20 characters" data-success=""></span>
+            </div>
+        </div>
+        <h6 class="center accent-text">Tell Us More (Optional)</h6>
+        <!-- Select Progile Image -->
+        <div class="row input-container">
+            <div class="input-field col s12 dropdown-space">
+                <select name="user-img" class="center">
+                    <option value="" disabled selected>Choose your face</option>
+                    {% for image in profile_images %}
+                        <option value="{{ image[0] }}" data-icon="{{ image[0] }}">{{ image[1] }}</option>
+                    {% endfor %}
+                </select>
+                <label class="options-label">Profile Pic</label>
+            </div>
+        </div>
+        <!-- Looking-for dropdown selector -->
+        <div class="row input-container">
+            <div class="input-field col s12 dropdown-space">
+                <select name="looking-for" class="validate" multiple>
+                    <option value="" disabled selected>Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+                <label class="options-label">Looking For:</label>
+            </div>
+        </div>
+        <h6 class="center accent-text">Add your socials (Optional) <i class="far fa-question-circle tooltipped" data-position="left" data-tooltip="Only visible to a matched users"></i></h6>
+        <!-- Facebook Messanger -->
+        <div class="row">
+            <div class="col s12 input-field">
+                <input
+                    id="fb-msgr"
+                    name="fb-msgr"
+                    type="text"
+                    class="validate"/>
+                <label for="fb-msgr" class="blue-text"><i class="fab fa-facebook-messenger"></i></label>
+            </div>
+        </div>
+        <!-- Whatsapp -->
+        <div class="row">
+            <div class="col s12 input-field">
+                <input
+                    id="whatsapp"
+                    name="whatsapp"
+                    type="text"
+                    class="validate"/>
+                <label for="whatsapp" class="green-text text-accent-4"><i class="fab fa-whatsapp"></i></label>
+            </div>
+        </div>
+        <!-- Facebook Messanger -->
+        <div class="row">
+            <div class="col s12 input-field">
+                <input
+                    id="instagram"
+                    name="instagram"
+                    type="text"
+                    class="validate"/>
+                <label for="instagram" class="pink-text text-darken-1"><i class="fab fa-instagram"></i></label>
+            </div>
+        </div>
+        <!-- submit button -->
+        <div class="row centered-row">
+            <button
+                class="col s5 m4 l3 swap-btn filled-red border-radius-m centered-elem"
+                type="submit"
+                name="action">
+                Register
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Redirect to log in page -->
+<div class="row">
+    <div class="col s12">
+        <p class="center-align">
+            Already a Swapper?
+            <a href="{{ url_for('login') }}" class="accent-text hover-undrline">Log In</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
